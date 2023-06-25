@@ -65,7 +65,6 @@ def calculate_mean(weather_data):
     return average
 
 
-
 def load_data_from_csv(csv_file):
     """Reads a csv file and stores the data in a list.
 
@@ -156,10 +155,49 @@ def generate_summary(weather_data):
     Returns:
         A string containing the summary information.
     """
+    #Variables
+    min_temp = float('inf')
+    min_temp_date = ""
+    max_temp = float('-inf')
+    max_temp_date = ""
+    total_min_temp = 0
+    total_max_temp = 0
 
+    #This will find min/max temperatures and calculate totals
+    for day in weather_data:
+        date_str = day[0]
+        datetime_object = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S%z")
+        day_of_week = datetime_object.strftime("%A %d %B %Y")
 
+        temp_min = convert_f_to_c2(day[1])
+        temp_max = convert_f_to_c2(day[2])
 
+    # Update min temperature and date if lower temperature is found
+        if temp_min < min_temp:
+            min_temp = temp_min
+            min_temp_date = day_of_week
 
+    #Update max temperature and date if higher temperature is found
+        if temp_max > max_temp:
+            max_temp = temp_max
+            max_temp_date = day_of_week
+
+    #Accumulate temperatures for averaging
+        total_min_temp += temp_min
+        total_max_temp += temp_max
+
+    #Calculating the average temperatures
+    avg_min_temp = total_min_temp / len(weather_data)
+    avg_max_temp = total_max_temp / len(weather_data)
+
+    #The format of the summary info
+    summary = "{} Day Overview\n".format(len(weather_data))
+    summary += "  The lowest temperature will be {:.1f}°C, and will occur on {}.\n".format(min_temp, min_temp_date)
+    summary += "  The highest temperature will be {:.1f}°C, and will occur on {}.\n".format(max_temp, max_temp_date)
+    summary += "  The average low this week is {:.1f}°C.\n".format(avg_min_temp)
+    summary += "  The average high this week is {:.1f}°C.\n".format(avg_max_temp)
+
+    return summary
 
 
 def generate_daily_summary(weather_data):
@@ -170,7 +208,7 @@ def generate_daily_summary(weather_data):
     Returns:
         A string containing the summary information.
     """
-    summary = ""  # Initialize an empty string to accumulate the summary information
+    summary = ""  
 
     for day in weather_data:
         date_str = day[0]
@@ -185,7 +223,7 @@ def generate_daily_summary(weather_data):
         formatted_max_temp = "  Maximum Temperature: {:.1f}°C".format(max_temp)
 
         formatted_output = "\n".join([formatted_date, formatted_min_temp, formatted_max_temp])
-        summary += formatted_output + "\n\n"  # Append the formatted weather information to the summary string
+        summary += formatted_output + "\n\n"  
 
     return summary
 
